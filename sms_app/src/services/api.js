@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000/api/SW_HR_V/';
+const API_URL = 'https://ehsan56.pythonanywhere.com/api/SW_HR_V/';
 
 // export const fetchSWHR = async () => {
 //     const response = await axios.get(API_URL);
