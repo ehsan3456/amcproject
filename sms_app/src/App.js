@@ -23,6 +23,7 @@ const AppContent = () => {
     }
   }, []);
 
+
   const checkAuthStatus = async (token) => {
     try {
       axios.defaults.headers.common['Authorization'] = `Token ${token}`;
