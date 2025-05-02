@@ -26,7 +26,7 @@ const AppContent = () => {
   const checkAuthStatus = async (token) => {
     try {
       axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      const response = await axios.get('http://127.0.0.1:8000/api/auth/status/');
+      const response = await axios.get('https://ehsan56.pythonanywhere.com/api/auth/status/');
       if (response.data.isAuthenticated) {
         setIsAuthenticated(true);
         setUser(response.data.user);
