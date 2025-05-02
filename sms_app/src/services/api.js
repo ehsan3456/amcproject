@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'https://ehsan56.pythonanywhere.com/api/SW_HR_V/';
+// const API_URL = 'https://ehsan56.pythonanywhere.com/api/SW_HR_V/';
+const BASE_URL = 'https://ehsan56.pythonanywhere.com/api';
 
 // export const fetchSWHR = async () => {
 //     const response = await axios.get(API_URL);
