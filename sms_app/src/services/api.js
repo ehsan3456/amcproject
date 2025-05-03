@@ -1,47 +1,89 @@
-import axios from 'axios';
+// src/services/api.js
+import api from './apiConfig';
 
-const API_URL = 'https://ehsan56.pythonanywhere.com/api/SW_HR_V/';
-
-// export const fetchSWHR = async () => {
-//     const response = await axios.get(API_URL);
-//     return response.data;
-// };
-
+// Authentication
 export const login = async (username, password) => {
-    try {
-      const response = await axios.post(`${API_URL}/token/`, { username, password });
-      localStorage.setItem('token', response.data.access);
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
+  try {
+    const response = await api.post('/login/', { username, password });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      return { success: true, user: response.data.user };
     }
-  };
-  
-  export const fetchEmployees = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await axios.get(`${API_URL}/employees/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Fetch employees error:', error);
-      return [];
-    }
-  };
-  
-  export const addEmployee = async (employeeData) => {
-    const token = localStorage.getItem('token');
-    try {
-      const response = await axios.post(`${API_URL}/employees/`, employeeData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.data;
-    } catch (error) {
-      console.error('Add employee error:', error);
-      throw error;
-    }
-  };
-  
-  
+    return { success: false, message: response.data.message || 'Login failed' };
+  } catch (error) {
+    console.error('Login error:', error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || 'Authentication failed. Please check your credentials.'
+    };
+  }
+};
+
+// Check authentication status
+export const checkAuthStatus = async () => {
+  try {
+    const response = await api.get('/auth/status/');
+    return response.data;
+  } catch (error) {
+    console.error('Auth check error:', error);
+    throw error;
+  }
+};
+
+// Fetch SWHR data
+export const fetchSWHR = async () => {
+  try {
+    const response = await api.get('/SWHR/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching SWHR data:', error);
+    throw error;
+  }
+};
+
+// Get contact number for staff
+export const getContactNumber = async (staffNo) => {
+  try {
+    const response = await api.get(`/get-contact-number/${staffNo}/`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching contact number for staff ${staffNo}:`, error);
+    throw error;
+  }
+};
+
+// Fetch templates
+export const fetchTemplates = async () => {
+  try {
+    const response = await api.get('/templates/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching templates:', error);
+    throw error;
+  }
+};
+
+// Send message
+export const sendMessage = async (message, contactNumbers) => {
+  try {
+    const response = await api.post('/sendmessage/', {
+      message,
+      contactNumbers
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sending message:', error);
+    throw error;
+  }
+};
+
+// Fetch outgoing SMS history
+export const fetchOutgoingSMS = async () => {
+  try {
+    const response = await api.get('/outgoing-sms/');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching outgoing SMS:', error);
+    throw error;
+  }
+};
