@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { fetchOutgoingSMS } from '../services/api';
 import '../styles/History.css';
 
 const History = () => {
@@ -8,15 +8,17 @@ const History = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchOutgoingSMS = async () => {
+    const loadSMSHistory = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://127.0.0.1:8000/api/outgoing-sms/');
-        if (Array.isArray(response.data)) {
-          setOutgoingSMS(response.data);
+        const data = await fetchOutgoingSMS();
+        
+        if (Array.isArray(data)) {
+          setOutgoingSMS(data);
         } else {
           throw new Error('Received invalid data format');
         }
+        
         setError(null);
       } catch (err) {
         setError('Failed to load outgoing SMS history. Please try again later.');
@@ -26,11 +28,11 @@ const History = () => {
       }
     };
 
-    fetchOutgoingSMS();
+    loadSMSHistory();
   }, []);
 
   const getStatusClass = (status) => {
-    switch (status) {
+    switch (status?.toLowerCase()) {
       case 'sent':
         return 'status-sent';
       case 'failed':
@@ -66,7 +68,7 @@ const History = () => {
                 <td>{sms.RECEIVER}</td>
                 <td>{sms.MSG}</td>
                 <td>
-                  <span className={`status ${getStatusClass(sms.status)}`}>
+                  <span className={`status ${getStatusClass(sms.STATUS)}`}>
                     {sms.STATUS}
                   </span>
                 </td>
@@ -81,4 +83,3 @@ const History = () => {
 };
 
 export default History;
-
