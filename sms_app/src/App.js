@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { checkAuthStatus } from './services/api';
 import Login from './components/Login';
 import Header from './components/Header';
 import Sidebar from './components/Sidebar';
@@ -9,40 +9,42 @@ import Employees from './components/Employees';
 import History from './components/History';
 import AddGroup from './components/AddGroup';
 import './App.css';
-import './styles/EmployeeTable.css'
+import './styles/EmployeeTable.css';
 
 const AppContent = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      checkAuthStatus(token);
-    }
-  }, []);
-
-  const checkAuthStatus = async (token) => {
-    try {
-      axios.defaults.headers.common['Authorization'] = `Token ${token}`;
-      const response = await axios.get('https://ehsan56.pythonanywhere.com/api/auth/status/');
-      if (response.data.isAuthenticated) {
-        setIsAuthenticated(true);
-        setUser(response.data.user);
+    const verifyAuth = async () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const authData = await checkAuthStatus();
+          if (authData.isAuthenticated) {
+            setIsAuthenticated(true);
+            setUser(authData.user);
+          } else {
+            // Clear invalid token
+            localStorage.removeItem('token');
+          }
+        } catch (error) {
+          console.error('Authentication error:', error);
+          localStorage.removeItem('token');
+        }
       }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      setIsAuthenticated(false);
-      localStorage.removeItem('token');
-    }
-  };
+      setIsLoading(false);
+    };
+
+    verifyAuth();
+  }, []);
 
   const handleLogin = (token, user) => {
     localStorage.setItem('token', token);
     setIsAuthenticated(true);
     setUser(user);
-    // Force a re-render of the entire app
     navigate('/');
   };
 
@@ -50,13 +52,16 @@ const AppContent = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
     setUser(null);
-    // Use navigate instead of window.location.href
     navigate('/login');
   };
 
+  if (isLoading) {
+    return <div className="loading-screen">Loading...</div>;
+  }
+
   return (
     <div className={`app ${isAuthenticated ? 'authenticated' : ''}`}>
-      {isAuthenticated && <Header onLogout={handleLogout} />}
+      {isAuthenticated && <Header onLogout={handleLogout} user={user} />}
       <div className={`main-content ${isAuthenticated ? 'authenticated' : ''}`}>
         {isAuthenticated && <Sidebar />}
         <div className="page-content">
@@ -81,6 +86,10 @@ const AppContent = () => {
               path="/add-group"
               element={isAuthenticated ? <AddGroup /> : <Navigate to="/login" />}
             />
+            <Route
+              path="*"
+              element={<Navigate to={isAuthenticated ? "/" : "/login"} />}
+            />
           </Routes>
         </div>
       </div>
@@ -97,4 +106,3 @@ const App = () => {
 };
 
 export default App;
-
