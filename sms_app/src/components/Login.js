@@ -1,36 +1,35 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import '../styles/Login.css'
+import { login } from "../services/api";
+import '../styles/Login.css';
 
-const Login = (props) => {
+const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     setError("");
+    setIsLoading(true);
 
     try {
-      const response = await axios.post("https://ehsan56.pythonanywhere.com/api/login/", {
-        username,
-        password,
-      });
-
-      if (response.data.success) {
-        localStorage.setItem("token", response.data.token);
-        axios.defaults.headers.common['Authorization'] = `Token ${response.data.token}`;
-        // Call the onLogin prop function to update the authentication state in App.js
-        props.onLogin(response.data.token, response.data.user);
+      const result = await login(username, password);
+      
+      if (result.success) {
+        // Call the onLogin prop function to update authentication state
+        onLogin(localStorage.getItem('token'), result.user);
         navigate("/");
       } else {
-        setError(response.data.message);
+        setError(result.message || "Login failed. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("Invalid credentials or server error. Please try again.");
+      setError("Server error. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -38,21 +37,25 @@ const Login = (props) => {
     <div className="login-page">
       <div className="login-container">
         <h1>Login</h1>
-        {error && <p style={{ color: "red" }}>{error}</p>}
+        {error && <p className="error-message">{error}</p>}
         <form onSubmit={handleLogin}>
           <input
             type="text"
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            required
           />
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
-          <button type="submit">Login</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
         </form>
       </div>
     </div>
@@ -60,4 +63,3 @@ const Login = (props) => {
 };
 
 export default Login;
-
