@@ -17,7 +17,7 @@ const Analytics = () => {
         
         const successRateResponse = await api.get('/analytics/success-rate/');
         setSuccessRate([
-          { name: 'Sent', value: successRateResponse.data.send },
+          { name: 'Sent', value: successRateResponse.data.sent },
           { name: 'Failed', value: successRateResponse.data.failed }
         ]);
         
