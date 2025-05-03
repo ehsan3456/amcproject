@@ -265,6 +265,7 @@ const EmployeeTable = () => {
           <option value="">Filter by Designation</option>
           <option value="Developer">Developer</option>
           <option value="Assistant Manager Developer">Assistant Manager Developer</option>
+          <option value="Hr Manager">Hr Manager</option>
         </select>
         <button
           onClick={clearFilters}
