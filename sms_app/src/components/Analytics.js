@@ -33,22 +33,22 @@ const Analytics = () => {
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
       <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Messages Sent Over Time</h2>
+        <h2 className="text-xl font-bold mb-4">Messages Sent Over Time</h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={messageOverTime}>
             <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="message" stroke="#8884d8" />
+            <Line type="monotone" dataKey="messages" stroke="#8884d8" />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       <div className="bg-white p-4 rounded-lg shadow">
-        <h2 className="text-xl font-semibold mb-4">Message Success Rate</h2>
+        <h2 className="text-xl font-bold mb-4">Message Success Rate</h2>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
@@ -56,20 +56,18 @@ const Analytics = () => {
               cx="50%"
               cy="50%"
               labelLine={false}
-              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-              outerRadius={100}
+              outerRadius={80}
               fill="#8884d8"
               dataKey="value"
+              label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
             >
               {successRate.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
             <Tooltip />
-            <Legend />
           </PieChart>
-        </ResponsiveContainer>
-      </div>
+        </ResponsiveContainer>      </div>
 
       <div className="bg-white p-4 rounded-lg shadow">
         <h2 className="text-xl font-bold mb-4">Messages Received by Branches </h2>
