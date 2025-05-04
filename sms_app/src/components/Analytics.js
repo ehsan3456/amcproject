@@ -71,9 +71,9 @@ const Analytics = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow col-span-1 md:col-span-2">
-        <h2 className="text-xl font-semibold mb-4">Messages Received by Branches</h2>
-        <ResponsiveContainer width="100%" height={300}>
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-bold mb-4">Messages Received by Branches </h2>
+        <ResponsiveContainer width="60%" height={300}>
           <BarChart data={locationMessageCount}>
             <XAxis dataKey="name" />
             <YAxis />
@@ -85,8 +85,7 @@ const Analytics = () => {
               ))}
             </Bar>
           </BarChart>
-        </ResponsiveContainer>
-      </div>
+        </ResponsiveContainer>      </div>
     </div>
   );
 };
