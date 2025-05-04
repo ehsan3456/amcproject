@@ -38,11 +38,11 @@ const Analytics = () => {
         <h2 className="text-xl font-semibold mb-4">Messages Sent Over Time</h2>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={messageOverTime}>
-            <XAxis dataKey="date" />
+            <XAxis dataKey="name" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="count" stroke="#8884d8" />
+            <Line type="monotone" dataKey="message" stroke="#8884d8" />
           </LineChart>
         </ResponsiveContainer>
       </div>
