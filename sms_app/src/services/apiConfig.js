@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 // Base URL for API calls - change this based on environment
-const API_BASE_URL = 'https://ehsan56.pythonanywhere.com/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL
+
 
 // Create an axios instance with default configuration
 const api = axios.create({
